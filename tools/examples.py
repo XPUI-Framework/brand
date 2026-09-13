@@ -35,9 +35,15 @@ def figure(content: str, caption: str) -> str:
 
 
 def themed(size: int) -> str:
-    """The README pattern: the inverted mark when the reader's theme is dark."""
+    """A web page's mark: the inverted file when the reader's theme is dark."""
     return (f'<picture><source media="(prefers-color-scheme: dark)" srcset="{ASSETS}/mark-inverted.svg">'
             f'{mark("mark.svg", size)}</picture>')
+
+
+def themed_png(size: int) -> str:
+    """The README pattern: the white PNG when the reader's theme is dark."""
+    return (f'<picture><source media="(prefers-color-scheme: dark)" srcset="{ASSETS}/mark-512-inverted.png">'
+            f'{mark("mark-512.png", size)}</picture>')
 
 
 def sizes() -> Example:
@@ -135,7 +141,7 @@ h1 { font: 600 32px/1.25 ui-monospace, Menlo, monospace; margin: 12px 0 16px; pa
 def readme() -> Example:
     body = ('<div class="badges"><span class="badge"><b>CI</b><i style="background:#4c1">passing</i></span>'
             '<span class="badge"><b>license</b><i style="background:#007ec6">MIT</i></span></div>'
-            f'{themed(64)}<h1>xpui</h1>'
+            f'{themed_png(64)}<h1>xpui</h1>'
             '<div class="alert"><b>⚠ Warning</b>Under heavy development. Not production-ready. '
             'The API can break without notice. Use at your own risk.</div>')
     return Example("readme", 640, 330, body, README_CSS, ("light", "dark"))

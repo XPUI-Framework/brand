@@ -39,12 +39,22 @@ same_geometry() {
     [ "$(sed "$strip" "assets/$m.svg")" = "$(sed "$strip" "assets/$m-inverted.svg")" ] || out="$out$m-inverted.svg differs from $m.svg
 "
   done
+  # A PNG and its inverted twin: swap ink and paper in one and it must be the other, pixel
+  # for pixel.
+  for m in mark-16 mark-32 mark-512; do
+    magick "assets/$m.png" -fill "#000001" -opaque "$INK" -fill "$INK" -opaque "$PAPER" \
+      -fill "$PAPER" -opaque "#000001" "$tmp/swapped.png"
+    diff=$(magick compare -metric AE "$tmp/swapped.png" "assets/$m-inverted.png" null: 2>&1 | cut -d' ' -f1)
+    [ "$diff" = "0" ] || out="$out$m-inverted.png is not $m.png with ink and paper swapped ($diff pixels)
+"
+  done
   [ -z "$out" ] && pass "each inverted file is its master's geometry" || fail "each inverted file is its master's geometry" "$out"
 }
 
 rasters() {
   out=""
   for spec in "mark-16.png 16x16" "mark-32.png 32x32" "mark-512.png 512x512" \
+              "mark-16-inverted.png 16x16" "mark-32-inverted.png 32x32" "mark-512-inverted.png 512x512" \
               "apple-touch-icon.png 180x180" "social-1280x640.png 1280x640"; do
     set -- $spec
     size=$(magick identify -format '%wx%h' "assets/$1")

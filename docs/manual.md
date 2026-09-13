@@ -78,36 +78,48 @@ All of them are in [`assets/`](../assets/).
 | `favicon.svg` | a browser tab; carries its own paper ground and swaps ink and paper when the operating system is dark |
 | `favicon.ico` | browsers without SVG icons: 16 and 48 from `mark-16`, 32 from `mark` |
 | `apple-touch-icon.png` | a phone's home screen, 180 × 180 |
-| `mark-512.png` | the organisation and repository avatar |
-| `mark-16.png`, `mark-32.png` | anywhere an SVG is not accepted |
+| `mark-512.png` | the organisation and repository avatar, and a README on a light theme at 64 px |
+| `mark-512-inverted.png` | a README on a dark theme at 64 px |
+| `mark-16.png`, `mark-32.png` | anywhere an SVG is not accepted, on a light ground |
+| `mark-16-inverted.png`, `mark-32-inverted.png` | the same, on a dark ground |
 | `social-1280x640.png` | a repository's social preview |
 
-Every PNG and the ICO are opaque, ink on paper: a transparent letter on a dark page or a dark
-tab would vanish.
+Every PNG and the ICO are opaque: a transparent letter on a dark page or a dark tab would
+vanish. `mark-*.png` is the black square with white letters, ink on paper; `mark-*-inverted.png`
+is the white square with black letters, paper on ink. Each is the other with the two colours
+swapped, pixel for pixel.
 
 ## In a README
 
-`<picture>` lets GitHub choose the file by the reader's theme:
+`<picture>` shows the black mark on a light theme and the white one on a dark theme:
 
 ```html
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/mark-inverted.svg">
-  <img src="assets/mark.svg" alt="XPUI" width="64" height="64">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/logo-black.png">
+  <img src="assets/logo-white.png" alt="XPUI" width="64" height="64">
 </picture>
 ```
 
 <img src="images/readme-light.png" width="320" alt="A README header in GitHub's light theme, with the ink mark"> <img src="images/readme-dark.png" width="320" alt="The same header in GitHub's dark theme, with the inverted mark">
 
-- **Copy `mark.svg` and `mark-inverted.svg` into that repository's `assets/`.** An image in a
-  README is read from the repository the README is in; a URL into this one fails for every
-  reader while it is private.
+- **Copy `mark-512.png` into that repository's `assets/` as `logo-white.png`, and
+  `mark-512-inverted.png` as `logo-black.png`** — named for their letters, and without the size,
+  which only this repository needs to tell its files apart. An image in a README is read from
+  the repository the README is in, so it moves with a fork and needs nothing else reachable.
+- **PNGs, each drawn in its own colours**, rather than one SVG recoloured: the file a reader
+  sees is the file in `assets/`, whatever renders it.
 - **Put it on the line after the badge line**, then a blank line, then the `#` title. The
   blank line ends the HTML block, so the title still renders as a heading.
-- **Width 64**, twice the grid.
+- **Width 64.** Each of the mark's 32 columns is 16 pixels in these files, so at 64 every
+  source pixel lands whole on a screen pixel and the edges stay sharp. `mark-32.png` at 64 is
+  a smooth-scaled PNG: a README cannot ask for `image-rendering: pixelated`.
 - A renderer that ignores `<picture>` shows the `<img>`, the light-theme mark.
+- **The swap follows `prefers-color-scheme`**, which is the reader's system or browser theme.
+  A reader who sets GitHub's theme apart from their system's sees the other file: the white
+  square on a white page. Check both themes with GitHub set to follow the system.
 - **Nothing checks these paths.** `documented paths resolve` reads markdown links, `[text](path)`,
-  and not `src=` or `srcset=`, so a moved or deleted `assets/` file breaks the logo silently.
-  Open the README on GitHub in both themes after changing it.
+  and not `src=` or `srcset=`, so a moved or deleted `assets/` file breaks the logo silently. Open the
+  README on GitHub in both themes after changing it.
 
 ## On a web page
 
